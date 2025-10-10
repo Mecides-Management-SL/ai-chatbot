@@ -1,13 +1,13 @@
+import type { ArtifactKind } from "@/lib/types";
 import type { Node } from "prosemirror-model";
 import { Plugin, PluginKey } from "prosemirror-state";
 import {
-  type Decoration,
-  DecorationSet,
-  type EditorView,
+    type Decoration,
+    DecorationSet,
+    type EditorView,
 } from "prosemirror-view";
 import { createRoot } from "react-dom/client";
-import type { ArtifactKind } from "@/components/artifact";
-import { Suggestion as PreviewSuggestion } from "@/components/suggestion";
+// Suggestion component removed - simplified for document merger
 import type { Suggestion } from "@/lib/db/schema";
 
 export interface UISuggestion extends Suggestion {
@@ -113,11 +113,15 @@ export function createSuggestionWidget(
   };
 
   root.render(
-    <PreviewSuggestion
-      artifactKind={artifactKind}
-      onApply={onApply}
-      suggestion={suggestion}
-    />
+    <div className="p-2 bg-muted rounded">
+      <p className="text-sm">Suggestion: {suggestion.suggestedText}</p>
+      <button 
+        onClick={onApply}
+        className="mt-1 px-2 py-1 bg-primary text-primary-foreground rounded text-xs"
+      >
+        Apply
+      </button>
+    </div>
   );
 
   return {

@@ -1,14 +1,14 @@
-import { toast } from "sonner";
 import { Artifact } from "@/components/create-artifact";
 import { CopyIcon, RedoIcon, UndoIcon } from "@/components/icons";
 import { ImageEditor } from "@/components/image-editor";
+import { toast } from "sonner";
 
 export const imageArtifact = new Artifact({
   kind: "image",
   description: "Useful for image generation",
   onStreamPart: ({ streamPart, setArtifact }) => {
     if (streamPart.type === "data-imageDelta") {
-      setArtifact((draftArtifact) => ({
+      setArtifact((draftArtifact: any) => ({
         ...draftArtifact,
         content: streamPart.data,
         isVisible: true,

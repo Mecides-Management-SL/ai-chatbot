@@ -1,17 +1,17 @@
-import { toast } from "sonner";
 import { Artifact } from "@/components/create-artifact";
 import { DiffView } from "@/components/diffview";
 import { DocumentSkeleton } from "@/components/document-skeleton";
 import {
-  ClockRewind,
-  CopyIcon,
-  MessageIcon,
-  PenIcon,
-  RedoIcon,
-  UndoIcon,
+    ClockRewind,
+    CopyIcon,
+    MessageIcon,
+    PenIcon,
+    RedoIcon,
+    UndoIcon,
 } from "@/components/icons";
 import { Editor } from "@/components/text-editor";
 import type { Suggestion } from "@/lib/db/schema";
+import { toast } from "sonner";
 import { getSuggestions } from "../actions";
 
 type TextArtifactMetadata = {
@@ -38,7 +38,7 @@ export const textArtifact = new Artifact<"text", TextArtifactMetadata>({
     }
 
     if (streamPart.type === "data-textDelta") {
-      setArtifact((draftArtifact) => {
+      setArtifact((draftArtifact: any) => {
         return {
           ...draftArtifact,
           content: draftArtifact.content + streamPart.data,

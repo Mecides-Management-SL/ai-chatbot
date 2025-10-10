@@ -1,9 +1,7 @@
-import type { UseChatHelpers } from "@ai-sdk/react";
+import type { Suggestion } from "@/lib/db/schema";
+import type { UIArtifact } from "@/lib/types";
 import type { DataUIPart } from "ai";
 import type { ComponentType, Dispatch, ReactNode, SetStateAction } from "react";
-import type { Suggestion } from "@/lib/db/schema";
-import type { ChatMessage, CustomUIDataTypes } from "@/lib/types";
-import type { UIArtifact } from "./artifact";
 
 export type ArtifactActionContext<M = any> = {
   content: string;
@@ -24,7 +22,7 @@ type ArtifactAction<M = any> = {
 };
 
 export type ArtifactToolbarContext = {
-  sendMessage: UseChatHelpers<ChatMessage>["sendMessage"];
+  sendMessage: (message: { role: "user"; parts: Array<{ type: "text"; text: string }> }) => void;
 };
 
 export type ArtifactToolbarItem = {
@@ -64,7 +62,7 @@ type ArtifactConfig<T extends string, M = any> = {
   onStreamPart: (args: {
     setMetadata: Dispatch<SetStateAction<M>>;
     setArtifact: Dispatch<SetStateAction<UIArtifact>>;
-    streamPart: DataUIPart<CustomUIDataTypes>;
+    streamPart: DataUIPart<any>;
   }) => void;
 };
 
@@ -78,7 +76,7 @@ export class Artifact<T extends string, M = any> {
   readonly onStreamPart: (args: {
     setMetadata: Dispatch<SetStateAction<M>>;
     setArtifact: Dispatch<SetStateAction<UIArtifact>>;
-    streamPart: DataUIPart<CustomUIDataTypes>;
+    streamPart: DataUIPart<any>;
   }) => void;
 
   constructor(config: ArtifactConfig<T, M>) {
