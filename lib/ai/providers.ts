@@ -25,12 +25,12 @@ export const myProvider = isTestEnvironment
     })()
   : customProvider({
       languageModels: {
-        "chat-model": gateway.languageModel("xai/grok-2-vision-1212"),
+        "chat-model": gateway.languageModel("anthropic/claude-3-5-sonnet"),
         "chat-model-reasoning": wrapLanguageModel({
-          model: gateway.languageModel("xai/grok-3-mini"),
+          model: gateway.languageModel("anthropic/claude-3-5-sonnet"),
           middleware: extractReasoningMiddleware({ tagName: "think" }),
         }),
-        "title-model": gateway.languageModel("xai/grok-2-1212"),
-        "artifact-model": gateway.languageModel("xai/grok-2-1212"),
+        "title-model": gateway.languageModel("anthropic/claude-3-5-sonnet"),
+        "artifact-model": gateway.languageModel("anthropic/claude-3-5-sonnet"),
       },
     });

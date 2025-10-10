@@ -36,7 +36,7 @@
 
 ## Model Providers
 
-This template uses the [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) to access multiple AI models through a unified interface. The default configuration includes [xAI](https://x.ai) models (`grok-2-vision-1212`, `grok-3-mini`) routed through the gateway.
+This template uses the [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) to access Claude 3.5 Sonnet with a 200k context window, perfect for processing large documents. The configuration includes Claude 3.5 Sonnet for all model types (chat, reasoning, title generation, and artifacts).
 
 ### AI Gateway Authentication
 
@@ -44,7 +44,7 @@ This template uses the [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) t
 
 **For non-Vercel deployments**: You need to provide an AI Gateway API key by setting the `AI_GATEWAY_API_KEY` environment variable in your `.env.local` file.
 
-With the [AI SDK](https://ai-sdk.dev/docs/introduction), you can also switch to direct LLM providers like [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [Cohere](https://cohere.com/), and [many more](https://ai-sdk.dev/providers/ai-sdk-providers) with just a few lines of code.
+With the [AI SDK](https://ai-sdk.dev/docs/introduction), you can also switch to other LLM providers like [OpenAI](https://openai.com), [Google](https://ai.google.dev/), [Cohere](https://cohere.com/), and [many more](https://ai-sdk.dev/providers/ai-sdk-providers) with just a few lines of code.
 
 ## Deploy Your Own
 
