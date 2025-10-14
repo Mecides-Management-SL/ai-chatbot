@@ -1,8 +1,7 @@
+import { DataStreamProvider } from "@/components/data-stream-provider";
+import { SidebarInset } from "@/components/ui/sidebar";
 import { cookies } from "next/headers";
 import Script from "next/script";
-import { AppSidebar } from "@/components/app-sidebar";
-import { DataStreamProvider } from "@/components/data-stream-provider";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "../(auth)/auth";
 
 export const experimental_ppr = true;
@@ -22,10 +21,10 @@ export default async function Layout({
         strategy="beforeInteractive"
       />
       <DataStreamProvider>
-        <SidebarProvider defaultOpen={!isCollapsed}>
-          <AppSidebar user={session?.user} />
+        {/* <SidebarProvider defaultOpen={!isCollapsed}> */}
+          {/* <AppSidebar user={session?.user} /> */}
           <SidebarInset>{children}</SidebarInset>
-        </SidebarProvider>
+        {/* </SidebarProvider> */}
       </DataStreamProvider>
     </>
   );

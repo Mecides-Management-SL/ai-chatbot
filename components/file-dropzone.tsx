@@ -145,12 +145,12 @@ export function FileDropzone({
                 ? "Máximo de documentos subidos"
                 : isUploading
                 ? "Subiendo..."
-                : "Arrastra tus documentos aquí"}
+                : "Arrastre sus documentos aquí"}
             </p>
             <p className="text-sm text-muted-foreground mt-1">
               {uploadedFiles.length >= maxFiles
-                ? "Puedes eliminar un documento para subir uno diferente"
-                : `Sube hasta ${maxFiles} documentos PDF (máximo 20MB cada uno)`}
+                ? "Puede eliminar un documento para subir uno diferente"
+                : `Suba hasta ${maxFiles} documentos PDF (máximo 20MB cada uno)`}
             </p>
           </div>
 

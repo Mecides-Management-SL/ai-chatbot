@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     // Create a unique document ID for this merge operation
     const documentId = generateUUID();
-    const title = `Merged Document - ${files.map(f => f.name).join(" + ")}`;
+    const title = `INFORME TÉCNICO-Evaluación de I+D conforme art. 35.1.a) LIS ${documentId}`;
 
     // Get merge guidelines (throws error if not configured)
     const { guidelinesDocumentUrl } = getMergeGuidelines();

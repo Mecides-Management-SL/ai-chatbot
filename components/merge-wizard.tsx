@@ -8,6 +8,7 @@ import {
   PlusIcon
 } from "@/components/icons";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Label } from "@Mecides-Management-SL/ui";
+import Image from "next/image";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
@@ -255,7 +256,7 @@ export function MergeWizard() {
   const getStepDescription = () => {
     switch (currentStep) {
       case "upload":
-        return "Sube 1-2 documentos PDF para combinar";
+        return "Adjunta la transcripción de la reunión inicial e información proporcionada del cliente (opcional)";
       case "process":
         return "La IA está analizando y combinando tus documentos";
       case "download":
@@ -269,10 +270,13 @@ export function MergeWizard() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Mecides AI</h1>
+        <div className="text-center mb-8 flex flex-col items-center justify-center gap-2">
+          <div className="flex items-center justify-center gap-2">
+            <Image src="/images/logo.png" alt="Mecides AI" width={200} height={100} />
+          <h1 className="text-3xl font-bold mb-2 text-primary">AI</h1>
+          </div>
           <p className="text-muted-foreground">
-            Suba 1-2 documentos y deja que la IA los combine en un solo documento
+            Generador de Informes iniciales para proyectos competitivos de I+D
           </p>
         </div>
 
@@ -376,7 +380,7 @@ export function MergeWizard() {
             {currentStep === "download" && mergeResult && (
               <div className="space-y-6">
                 <div className="text-center">
-                  <h3 className="text-lg font-medium mb-2">{mergeResult.title}</h3>
+                  <h3 className="text-lg font-medium mb-2">{`INFORME TÉCNICO-Evaluación de I+D conforme art. 35.1.a) LIS`} </h3>
                   <p className="text-muted-foreground">
                     Tu documento está listo para descargar
                   </p>
