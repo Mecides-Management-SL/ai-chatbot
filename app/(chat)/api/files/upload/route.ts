@@ -12,8 +12,8 @@ const FileSchema = z.object({
       message: "File size should be less than 20MB",
     })
     // Update the file type based on the kind of files you want to accept
-    .refine((file) => ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(file.type), {
-      message: "File type should be PDF or Word Document",
+    .refine((file) => ["application/pdf"].includes(file.type), {
+      message: "File type should be PDF",
     }),
 });
 

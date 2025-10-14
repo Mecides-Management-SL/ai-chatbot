@@ -4,18 +4,16 @@ import { FileDropzone, type UploadedFile } from "@/components/file-dropzone";
 import {
   CheckCircleFillIcon,
   DownloadIcon,
-  FileIcon,
   LoaderIcon,
-  PlusIcon,
+  PlusIcon
 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { downloadMarkdown, generateAndDownloadPdf, generatePdfDataUrl } from "@/lib/pdf-utils";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { Label } from "./ui/label";
 
-type WizardStep = "upload" | "preview" | "process" | "download";
+type WizardStep = "upload" | "process" | "download";
 
 interface MergeResult {
   documentId: string;
@@ -76,8 +74,6 @@ export function MergeWizard() {
 
   const handleNext = useCallback(() => {
     if (currentStep === "upload" && uploadedFiles.length > 0) {
-      setCurrentStep("preview");
-    } else if (currentStep === "preview") {
       setCurrentStep("process");
       processDocuments();
     } else if (currentStep === "process" && mergeResult) {
@@ -87,10 +83,8 @@ export function MergeWizard() {
   }, [currentStep, uploadedFiles.length, mergeResult]);
 
   const handleBack = useCallback(() => {
-    if (currentStep === "preview") {
+    if (currentStep === "process") {
       setCurrentStep("upload");
-    } else if (currentStep === "process") {
-      setCurrentStep("preview");
     } else if (currentStep === "download") {
       setCurrentStep("process");
     }
@@ -118,14 +112,14 @@ export function MergeWizard() {
       if (response.ok) {
         const result = await response.json();
         setMergeResult(result);
-        toast.success("Documents merged successfully!");
+        toast.success("Documentos combinados exitosamente!");
       } else {
         const { error } = await response.json();
-        toast.error(error || "Failed to merge documents");
+        toast.error(error || "Ha ocurrido un error al combinar los documentos");
       }
     } catch (error) {
       console.error("Merge error:", error);
-      toast.error("Failed to merge documents, please try again");
+      toast.error("Ha ocurrido un error al combinar los documentos, por favor intenta nuevamente");
     } finally {
       setIsProcessing(false);
     }
@@ -135,11 +129,34 @@ export function MergeWizard() {
     if (!mergeResult) return;
 
     try {
-      const url = await generatePdfDataUrl(mergeResult.content);
+      toast.loading("Generando vista previa del PDF...", { id: "pdf-preview" });
+      
+      // Generate PDF on server
+      const generateResponse = await fetch('/api/pdf/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          html: mergeResult.content,
+          filename: `${mergeResult.title}.pdf`,
+        }),
+      });
+
+      if (!generateResponse.ok) {
+        throw new Error('Failed to generate PDF');
+      }
+
+      // Convert to blob URL for preview
+      const pdfBuffer = await generateResponse.arrayBuffer();
+      const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
       setPdfPreviewUrl(url);
+      
+      toast.success("Vista previa del PDF generada!", { id: "pdf-preview" });
     } catch (error) {
       console.error("PDF generation error:", error);
-      toast.error("Failed to generate PDF preview");
+      toast.error("Ha ocurrido un error al generar la vista previa del PDF", { id: "pdf-preview" });
     }
   }, [mergeResult]);
 
@@ -147,20 +164,62 @@ export function MergeWizard() {
     if (!mergeResult) return;
 
     try {
-      await generateAndDownloadPdf(mergeResult.content, `${mergeResult.title}.pdf`);
-      toast.success("PDF downloaded successfully!");
+      toast.loading("Generating PDF...", { id: "pdf-download" });
+      
+      // Step 1: Generate PDF on server
+      const generateResponse = await fetch('/api/pdf/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          html: mergeResult.content,
+          filename: `${mergeResult.title}.pdf`,
+        }),
+      });
+
+      if (!generateResponse.ok) {
+        throw new Error('Failed to generate PDF');
+      }
+
+      // Step 2: Convert PDF to base64 for upload
+      const pdfBuffer = await generateResponse.arrayBuffer();
+      const uint8Array = new Uint8Array(pdfBuffer);
+      const base64Pdf = btoa(String.fromCharCode.apply(null, Array.from(uint8Array)));
+
+      // Step 3: Upload to Vercel Blob
+      const uploadResponse = await fetch('/api/pdf/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pdfBuffer: base64Pdf,
+          filename: `${mergeResult.title}.pdf`,
+        }),
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload PDF');
+      }
+
+      const { url } = await uploadResponse.json();
+
+      // Step 4: Download the PDF
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${mergeResult.title}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("PDF descargado exitosamente!", { id: "pdf-download" });
     } catch (error) {
       console.error("PDF download error:", error);
-      toast.error("Failed to download PDF");
+      toast.error("Ha ocurrido un error al descargar el PDF", { id: "pdf-download" });
     }
   }, [mergeResult]);
 
-  const handleDownloadMarkdown = useCallback(() => {
-    if (!mergeResult) return;
-
-    downloadMarkdown(mergeResult.content, `${mergeResult.title}.md`);
-    toast.success("Markdown file downloaded!");
-  }, [mergeResult]);
 
   const handleStartNew = useCallback(() => {
     setCurrentStep("upload");
@@ -173,8 +232,6 @@ export function MergeWizard() {
     switch (currentStep) {
       case "upload":
         return uploadedFiles.length > 0;
-      case "preview":
-        return true;
       case "process":
         return !isProcessing && mergeResult !== null;
       case "download":
@@ -187,13 +244,11 @@ export function MergeWizard() {
   const getStepTitle = () => {
     switch (currentStep) {
       case "upload":
-        return "Upload Documents";
-      case "preview":
-        return "Preview Files";
+        return "Subir documentos";
       case "process":
-        return "Processing Documents";
+        return "Procesando documentos";
       case "download":
-        return "Download Results";
+        return "Descargar resultados";
       default:
         return "";
     }
@@ -202,13 +257,11 @@ export function MergeWizard() {
   const getStepDescription = () => {
     switch (currentStep) {
       case "upload":
-        return "Upload 1-2 PDF or DOCX files to merge";
-      case "preview":
-        return "Review your uploaded files before processing";
+        return "Sube 1-2 documentos PDF para combinar";
       case "process":
-        return "AI is analyzing and merging your documents";
+        return "La IA está analizando y combinando tus documentos";
       case "download":
-        return "Your merged document is ready for download";
+        return "Tu documento está listo para descargar";
       default:
         return "";
     }
@@ -219,19 +272,19 @@ export function MergeWizard() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Document Merger</h1>
+          <h1 className="text-3xl font-bold mb-2">Mecides AI</h1>
           <p className="text-muted-foreground">
-            Upload 1-2 documents and let AI merge them into a comprehensive document
+            Suba 1-2 documentos y deja que la IA los combine en un solo documento
           </p>
         </div>
 
         {/* Progress Steps */}
         <div className="flex items-center justify-center mb-8">
           <div className="flex items-center space-x-4">
-            {["upload", "preview", "process", "download"].map((step, index) => {
+            {["upload", "process", "download"].map((step, index) => {
               const stepIndex = index + 1;
               const isActive = currentStep === step;
-              const isCompleted = ["upload", "preview", "process", "download"].indexOf(currentStep) > index;
+              const isCompleted = ["upload", "process", "download"].indexOf(currentStep) > index;
               
               return (
                 <div key={step} className="flex items-center">
@@ -277,35 +330,7 @@ export function MergeWizard() {
                 />
               </div>
             )}
-
-            {/* Preview Step */}
-            {currentStep === "preview" && (
-              <div className="space-y-4">
-                <div className="grid gap-4">
-                  {uploadedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <FileIcon size={20} />
-                        <div>
-                          <p className="font-medium">{file.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {(file.file.size / 1024 / 1024).toFixed(1)} MB
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeFile(file)}
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
+          
             {/* Process Step */}
             {currentStep === "process" && (
               <div className="text-center py-12">
@@ -315,9 +340,9 @@ export function MergeWizard() {
                       <LoaderIcon size={48} />
                     </div>
                     <div>
-                      <h3 className="text-lg font-medium">Processing Documents</h3>
+                      <h3 className="text-lg font-medium">Procesando documentos</h3>
                       <p className="text-muted-foreground">
-                        AI is analyzing and merging your documents. This may take a few minutes...
+                        La IA está analizando y combinando tus documentos. Esto puede tomar unos minutos...
                       </p>
                     </div>
                   </div>
@@ -327,9 +352,9 @@ export function MergeWizard() {
                       <CheckCircleFillIcon size={48} />
                     </div>
                     <div>
-                      <h3 className="text-lg font-medium">Processing Complete!</h3>
+                      <h3 className="text-lg font-medium">Procesado completado!</h3>
                       <p className="text-muted-foreground">
-                        Your documents have been successfully merged.
+                        Tus documentos han sido combinados exitosamente.
                       </p>
                     </div>
                   </div>
@@ -339,9 +364,9 @@ export function MergeWizard() {
                       <PlusIcon size={48} />
                     </div>
                     <div>
-                      <h3 className="text-lg font-medium">Ready to Process</h3>
+                      <h3 className="text-lg font-medium">Listo para procesar</h3>
                       <p className="text-muted-foreground">
-                        Click "Process Documents" to start merging.
+                        Haz clic en "Procesar documentos" para empezar a combinar.
                       </p>
                     </div>
                   </div>
@@ -355,14 +380,26 @@ export function MergeWizard() {
                 <div className="text-center">
                   <h3 className="text-lg font-medium mb-2">{mergeResult.title}</h3>
                   <p className="text-muted-foreground">
-                    Your merged document is ready for download
+                    Tu documento está listo para descargar
                   </p>
                 </div>
+
+                {/* Development: Raw LLM Output Preview */}
+                {process.env.NODE_ENV === 'development' && (
+                  <div className="space-y-2">
+                    <Label>Salida raw de la IA (Solo para desarrollo)</Label>
+                    <div className="border rounded-lg p-4 bg-muted max-h-64 overflow-auto">
+                      <pre className="text-xs whitespace-pre-wrap font-mono">
+                        {mergeResult.content}
+                      </pre>
+                    </div>
+                  </div>
+                )}
 
                 {/* PDF Preview */}
                 {pdfPreviewUrl && (
                   <div className="space-y-2">
-                    <Label>PDF Preview</Label>
+                    <Label>Vista previa del PDF</Label>
                     <div className="border rounded-lg overflow-hidden">
                       <iframe
                         src={pdfPreviewUrl}
@@ -372,52 +409,49 @@ export function MergeWizard() {
                     </div>
                   </div>
                 )}
-
+                <div className="flex gap-3 justify-between w-full">
                 {/* Download Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 w-full">
                   <Button onClick={handleDownloadPdf} className="flex-1">
                     <div className="flex items-center">
                       <DownloadIcon size={16} />
-                      <span className="ml-2">Download PDF</span>
-                    </div>
-                  </Button>
-                  <Button onClick={handleDownloadMarkdown} variant="outline" className="flex-1">
-                    <div className="flex items-center">
-                      <FileIcon size={16} />
-                      <span className="ml-2">Download Markdown</span>
+                      <span className="ml-2">Descargar PDF</span>
                     </div>
                   </Button>
                 </div>
 
                 {/* Start New Button */}
-                <div className="text-center">
-                  <Button onClick={handleStartNew} variant="ghost">
+                <div className="text-center w-full">
+                  <Button onClick={handleStartNew} variant="ghost" className="w-full">
                     <div className="flex items-center">
                       <PlusIcon size={16} />
-                      <span className="ml-2">Start New Merge</span>
+                      <span className="ml-2">Iniciar nuevo proceso</span>
                     </div>
                   </Button>
+                </div>
                 </div>
               </div>
             )}
 
             {/* Navigation */}
+            {currentStep !== "download" && (
             <div className="flex justify-between mt-8">
             <Button
               variant="outline"
               onClick={handleBack}
               disabled={currentStep === "upload" || isProcessing}
             >
-              ← Back
+              ← Atrás
             </Button>
             
             <Button
               onClick={handleNext}
               disabled={!canProceed() || isProcessing}
             >
-              {currentStep === "process" && !isProcessing ? "Process Documents" : "Next →"}
+              {currentStep === "process" && !isProcessing ? "Procesar documentos" : "Siguiente →"}
             </Button>
             </div>
+            )}
           </CardContent>
         </Card>
       </div>

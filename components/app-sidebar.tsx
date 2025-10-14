@@ -2,11 +2,11 @@
 
 import { SidebarUserNav } from "@/components/sidebar-user-nav";
 import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-    SidebarMenu,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
 } from "@/components/ui/sidebar";
 import type { User } from "next-auth";
 import Link from "next/link";
@@ -22,7 +22,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               href="/"
             >
               <span className="cursor-pointer rounded-md px-2 font-semibold text-lg hover:bg-muted">
-                Document Merger
+                Mecides AI
               </span>
             </Link>
           </div>

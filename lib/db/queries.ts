@@ -2,23 +2,21 @@ import "server-only";
 
 import type { ArtifactKind } from "@/lib/types";
 import {
-    and,
-    asc,
-    desc,
-    eq,
-    gt
+  and,
+  asc,
+  desc,
+  eq,
+  gt
 } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { ChatSDKError } from "../errors";
 import { generateUUID } from "../utils";
 import {
-    document,
-    stream,
-    type Suggestion,
-    suggestion,
-    type User,
-    user,
+  document,
+  stream,
+  type User,
+  user,
 } from "./schema";
 import { generateHashedPassword } from "./utils";
 
@@ -141,15 +139,6 @@ export async function deleteDocumentsByIdAfterTimestamp({
   timestamp: Date;
 }) {
   try {
-    await db
-      .delete(suggestion)
-      .where(
-        and(
-          eq(suggestion.documentId, id),
-          gt(suggestion.documentCreatedAt, timestamp)
-        )
-      );
-
     return await db
       .delete(document)
       .where(and(eq(document.id, id), gt(document.createdAt, timestamp)))
@@ -162,75 +151,25 @@ export async function deleteDocumentsByIdAfterTimestamp({
   }
 }
 
-export async function saveSuggestions({
-  suggestions,
-}: {
-  suggestions: Suggestion[];
-}) {
-  try {
-    return await db.insert(suggestion).values(suggestions);
-  } catch (_error) {
-    throw new ChatSDKError(
-      "bad_request:database",
-      "Failed to save suggestions"
-    );
-  }
-}
 
-export async function getSuggestionsByDocumentId({
-  documentId,
-}: {
-  documentId: string;
-}) {
-  try {
-    return await db
-      .select()
-      .from(suggestion)
-      .where(and(eq(suggestion.documentId, documentId)));
-  } catch (_error) {
-    throw new ChatSDKError(
-      "bad_request:database",
-      "Failed to get suggestions by document id"
-    );
-  }
-}
+
 
 
 
 
 export async function createStreamId({
   streamId,
-  chatId,
 }: {
   streamId: string;
-  chatId: string;
 }) {
   try {
     await db
       .insert(stream)
-      .values({ id: streamId, chatId, createdAt: new Date() });
+      .values({ id: streamId, createdAt: new Date() });
   } catch (_error) {
     throw new ChatSDKError(
       "bad_request:database",
       "Failed to create stream id"
-    );
-  }
-}
-
-export async function getStreamIdsByChatId({ chatId }: { chatId: string }) {
-  try {
-    const streamIds = await db
-      .select({ id: stream.id })
-      .from(stream)
-      .where(eq(stream.chatId, chatId))
-      .orderBy(asc(stream.createdAt))
-      .execute();
-
-    return streamIds.map(({ id }) => id);
-  } catch (_error) {
-    throw new ChatSDKError(
-      "bad_request:database",
-      "Failed to get stream ids by chat id"
     );
   }
 }

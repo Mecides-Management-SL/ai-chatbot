@@ -52,9 +52,7 @@ export function FileDropzone({
 
     const files = Array.from(e.dataTransfer.files).filter((file) => {
       const validTypes = [
-        "application/pdf",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ];
+        "application/pdf"];
       return validTypes.includes(file.type);
     });
 
@@ -75,9 +73,7 @@ export function FileDropzone({
 
     const files = Array.from(e.target.files || []).filter((file) => {
       const validTypes = [
-        "application/pdf",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ];
+        "application/pdf"];
       return validTypes.includes(file.type);
     });
 
@@ -130,7 +126,7 @@ export function FileDropzone({
         <input
           type="file"
           multiple={maxFiles > 1}
-          accept=".pdf,.docx"
+          accept=".pdf"
           onChange={handleFileInput}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
           disabled={disabled || uploadedFiles.length >= maxFiles}
@@ -146,15 +142,15 @@ export function FileDropzone({
           <div>
             <p className="text-lg font-medium">
               {uploadedFiles.length >= maxFiles
-                ? "Maximum files uploaded"
+                ? "Máximo de documentos subidos"
                 : isUploading
-                ? "Uploading..."
-                : "Drop your documents here"}
+                ? "Subiendo..."
+                : "Arrastra tus documentos aquí"}
             </p>
             <p className="text-sm text-muted-foreground mt-1">
               {uploadedFiles.length >= maxFiles
-                ? "You can remove a file to upload a different one"
-                : `Upload up to ${maxFiles} PDF or DOCX files (max 20MB each)`}
+                ? "Puedes eliminar un documento para subir uno diferente"
+                : `Sube hasta ${maxFiles} documentos PDF (máximo 20MB cada uno)`}
             </p>
           </div>
 
@@ -165,7 +161,7 @@ export function FileDropzone({
               disabled={disabled}
               className="pointer-events-none"
             >
-              Choose Files
+              Elegir archivos
             </Button>
           )}
         </div>
@@ -174,7 +170,7 @@ export function FileDropzone({
       {/* Uploaded Files */}
       {uploadedFiles.length > 0 && (
         <div className="mt-4 space-y-2">
-          <h4 className="text-sm font-medium">Uploaded Files:</h4>
+          <h4 className="text-sm font-medium">Documentos subidos:</h4>
           {uploadedFiles.map((file, index) => (
             <div
               key={`${file.name}-${index}`}

@@ -1,4 +1,3 @@
-import type { Suggestion } from "@/lib/db/schema";
 import type { UIArtifact } from "@/lib/types";
 import type { DataUIPart } from "ai";
 import type { ComponentType, Dispatch, ReactNode, SetStateAction } from "react";
@@ -38,7 +37,6 @@ type ArtifactContent<M = any> = {
   isCurrentVersion: boolean;
   currentVersionIndex: number;
   status: "streaming" | "idle";
-  suggestions: Suggestion[];
   onSaveContent: (updatedContent: string, debounce: boolean) => void;
   isInline: boolean;
   getDocumentContentById: (index: number) => string;
