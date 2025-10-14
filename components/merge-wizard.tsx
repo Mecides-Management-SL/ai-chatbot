@@ -7,11 +7,9 @@ import {
   LoaderIcon,
   PlusIcon
 } from "@/components/icons";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Label } from "@Mecides-Management-SL/ui";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { Label } from "./ui/label";
 
 type WizardStep = "upload" | "process" | "download";
 

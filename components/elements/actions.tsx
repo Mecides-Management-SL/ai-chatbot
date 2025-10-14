@@ -1,14 +1,14 @@
 "use client";
 
-import type { ComponentProps } from "react";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
+  Button,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+} from "@Mecides-Management-SL/ui";
+import type { ComponentProps } from "react";
 
 export type ActionsProps = ComponentProps<"div">;
 

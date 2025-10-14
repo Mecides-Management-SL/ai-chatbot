@@ -1,8 +1,8 @@
 "use client";
 
 import { CrossIcon, FileIcon, UploadIcon } from "@/components/icons";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Button } from "@Mecides-Management-SL/ui";
 import { useCallback, useState } from "react";
 
 export interface UploadedFile {

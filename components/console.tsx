@@ -1,3 +1,6 @@
+import { useArtifactSelector } from "@/hooks/use-artifact";
+import { cn } from "@/lib/utils";
+import { Button } from "@Mecides-Management-SL/ui";
 import {
   type Dispatch,
   type SetStateAction,
@@ -6,11 +9,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { useArtifactSelector } from "@/hooks/use-artifact";
-import { cn } from "@/lib/utils";
 import { Loader } from "./elements/loader";
 import { CrossSmallIcon, TerminalWindowIcon } from "./icons";
-import { Button } from "./ui/button";
 
 export type ConsoleOutputContent = {
   type: "text" | "image";

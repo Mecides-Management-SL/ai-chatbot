@@ -1,7 +1,6 @@
+import { Input, Label } from "@Mecides-Management-SL/ui";
 import Form from "next/form";
 
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 
 export function AuthForm({
   action,

@@ -1,14 +1,14 @@
 import type { ComponentProps } from "react";
 
 import { type SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import {
+  Button,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+} from "@Mecides-Management-SL/ui";
 import { SidebarLeftIcon } from "./icons";
-import { Button } from "./ui/button";
 
 export function SidebarToggle({
   className,

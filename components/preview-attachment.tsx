@@ -1,8 +1,8 @@
-import Image from "next/image";
 import type { Attachment } from "@/lib/types";
+import { Button } from "@Mecides-Management-SL/ui";
+import Image from "next/image";
 import { Loader } from "./elements/loader";
 import { CrossSmallIcon } from "./icons";
-import { Button } from "./ui/button";
 
 export const PreviewAttachment = ({
   attachment,
