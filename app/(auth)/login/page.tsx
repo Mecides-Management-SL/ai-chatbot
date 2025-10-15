@@ -55,7 +55,7 @@ export default function Page() {
     <div className="flex h-dvh w-screen items-start justify-center bg-background pt-12 md:items-center md:pt-0">
       <div className="flex w-full max-w-md flex-col gap-12 overflow-hidden rounded-2xl">
         <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
-          <h3 className="font-semibold text-xl dark:text-zinc-50">Iniciar sesión</h3>
+          <h3 className="font-semibold text-xl text-primary">Iniciar sesión</h3>
           <p className="text-gray-500 text-sm dark:text-zinc-400">
             Use tu email y contraseña para iniciar sesión
           </p>
