@@ -272,7 +272,7 @@ export function MergeWizard() {
         {/* Header */}
         <div className="text-center mb-8 flex flex-col items-center justify-center gap-2">
           <div className="flex items-center justify-center gap-2">
-            <Image src="/images/logo.png" alt="Mecides AI" width={200} height={100} />
+            <Image src="/images/logo.webp" alt="Mecides AI" width={200} height={100} />
           <h1 className="text-3xl font-bold mb-2 text-primary">AI</h1>
           </div>
           <p className="text-muted-foreground">

@@ -1,5 +1,5 @@
-import { type NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { type NextRequest, NextResponse } from "next/server";
 import { guestRegex, isDevelopmentEnvironment } from "./lib/constants";
 
 export async function middleware(request: NextRequest) {
@@ -13,7 +13,16 @@ export async function middleware(request: NextRequest) {
     return new Response("pong", { status: 200 });
   }
 
-  if (pathname.startsWith("/api/auth")) {
+  // Allow access to auth-related paths without authentication
+  if (pathname.startsWith("/api/auth") || pathname === "/login" || pathname === "/register") {
+    return NextResponse.next();
+  }
+  
+  // Allow access to static assets without authentication
+  if (pathname.includes('/_next/') || 
+      pathname.includes('/favicon.ico') || 
+      pathname.includes('/sitemap.xml') || 
+      pathname.includes('/robots.txt')) {
     return NextResponse.next();
   }
 
@@ -24,10 +33,8 @@ export async function middleware(request: NextRequest) {
   });
 
   if (!token) {
-    const redirectUrl = encodeURIComponent(request.url);
-
     return NextResponse.redirect(
-      new URL(`/api/auth/guest?redirectUrl=${redirectUrl}`, request.url)
+      new URL('/login', request.url)
     );
   }
 
@@ -52,8 +59,10 @@ export const config = {
      * Match all request paths except for the ones starting with:
      * - _next/static (static files)
      * - _next/image (image optimization files)
+     * - _next/data (data files)
+     * - api/auth (authentication endpoints)
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      */
-    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!_next/static|_next/image|_next/data|api/auth|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };

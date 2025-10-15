@@ -8,6 +8,8 @@ export const isTestEnvironment = Boolean(
     process.env.CI_PLAYWRIGHT
 );
 
+// Kept for backward compatibility with existing data
+// Guest users are no longer supported in the application
 export const guestRegex = /^guest-\d+$/;
 
 export const DUMMY_PASSWORD = generateDummyPassword();
