@@ -1,7 +1,8 @@
 import { auth } from "@/app/(auth)/auth";
+import chromium from "@sparticuz/chromium-min";
 import { marked } from "marked";
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
 import { z } from "zod";
 
 const GeneratePdfSchema = z.object({
@@ -23,10 +24,10 @@ export async function POST(request: Request) {
     // Convert markdown to HTML using marked
     const processedHtml = await marked.parse(html);
 
-    // Launch Puppeteer
+    // Launch Puppeteer with Vercel-compatible configuration
     const browser = await puppeteer.launch({
-      headless: true,
       args: [
+        ...(chromium.args || []),
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
@@ -34,7 +35,9 @@ export async function POST(request: Request) {
         '--no-first-run',
         '--no-zygote',
         '--disable-gpu'
-      ]
+      ],
+      executablePath: await chromium.executablePath(),
+      headless: true,
     });
 
     try {
