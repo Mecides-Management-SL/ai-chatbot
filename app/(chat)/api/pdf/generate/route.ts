@@ -1,5 +1,5 @@
 import { auth } from "@/app/(auth)/auth";
-import chromium from "@sparticuz/chromium-min";
+import chromium from "@sparticuz/chromium";
 import { marked } from "marked";
 import { NextResponse } from "next/server";
 import puppeteer from "puppeteer-core";
