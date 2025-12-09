@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Empty turbopack config to acknowledge the default Turbopack behavior
+  // Turbopack automatically excludes Node.js built-ins (fs, net, tls) from client bundles
+  turbopack: {},
   webpack: (config, { isServer }) => {
     // Exclude Puppeteer from client-side bundle
     if (!isServer) {
