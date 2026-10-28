@@ -102,7 +102,7 @@ The guidelines document contains specific formatting and structure requirements 
     
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Invalid request data", details: error.errors },
+        { error: "Invalid request data", details: error.issues },
         { status: 400 }
       );
     }
