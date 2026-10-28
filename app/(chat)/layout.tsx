@@ -4,8 +4,6 @@ import { cookies } from "next/headers";
 import Script from "next/script";
 import { auth } from "../(auth)/auth";
 
-export const experimental_ppr = true;
-
 export default async function Layout({
   children,
 }: {

@@ -2,9 +2,15 @@ name: Lint
 on:
   push:
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   build:
     runs-on: ubuntu-22.04
+    env:
+      NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
         node-version: [20]
